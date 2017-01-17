@@ -30,14 +30,14 @@ def host(id):
 
 
 
-pool.ncpus = 1
+pool.ncpus = 4
 print("Evaluate on "+str(pool.ncpus)+" cpus")
-pool.servers = ('localhost:5653','localhost:5654',)
+pool.servers = ('localhost:5653','localhost:5654', 'Filip:5653')
 
 
 ##     >>> # do an asynchronous map, then get the results
 print("non blocking with wait")
-res5 = pool.amap( host, range(12) )
+res5 = pool.amap( host, range(8) )
 while not res5.ready():
          time.sleep(1)
          print(stats()  )
