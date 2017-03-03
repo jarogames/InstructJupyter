@@ -21,12 +21,12 @@ pool = Pool()
 def calculpi():
     from decimal import Decimal, getcontext   # PI calc
     #print( 'print pii ....' )
-    getcontext().prec=20
+    getcontext().prec=3500
     pii=sum(1/Decimal(16)**k * 
             (Decimal(4)/(8*k+1) - 
              Decimal(2)/(8*k+4) - 
              Decimal(1)/(8*k+5) -
-             Decimal(1)/(8*k+6)) for k in range(20))
+             Decimal(1)/(8*k+6)) for k in range(3500))
    # print( 'print pii',pii )
     return pii
 
@@ -48,23 +48,26 @@ def host(id):
 
 
 
-pool.ncpus = 1
+pool.ncpus = '*'
+pool.ncpus = 'autodetect'
+pool.ncpus = 0  # when nodes replaced by 1
+#pool.nodes='*'
 print("Evaluate on "+str(pool.ncpus)+" cpus")
-pool.servers = ('localhost:5653','localhost:5654', 'Filip:5653')
+pool.servers = ('localhost:5653','localhost:5654', 'Filip:5653','aaron:5653')
 
 
 ##     >>> # do an asynchronous map, then get the results
-totprocess=8
+totalchunks=16
 print("non blocking with wait", )
-res5 = pool.amap( host, range(totprocess) )
+res5 = pool.amap( host, range(totalchunks) )
 while not res5.ready():
          time.sleep(1)
          print(stats()  )
 
 print( "=========")
-csvheader="n,host,result\n"
+csvheader="chunk,host,result\n"
 csv=csvheader+"\n".join(res5.get()) 
-print( csv,' === CSV' )
+####print( csv,' === CSV' )
 pool.close()
 pool.join()
 ######### get csv to pandas
@@ -78,21 +81,5 @@ output = StringIO()
 df.to_csv(output)
 output.seek(0)
 pt = prettytable.from_csv(output)
-print('pretty table:\n',pt)
+#print('pretty table:\n',pt)
 print( 'pandas:\n',df )
-# print("blocking uimap join")
-# res5 = pool.uimap( host, range(2) ) # blocking
-# print(pool)
-# print(stats())
-# print('\n'.join(res5))  # blocks here
-# print(stats())
-# print('')
-
-# print("PIPE")
-# # do one item at a time, using an asynchronous pipe
-# res=[]
-# for i in range(8):
-#     res.append(   pool.apipe( host, i) )
-# print("blocking  get() comes with apipe")
-# for i in range(8):
-#     print(i,'.',res[i].get() )
