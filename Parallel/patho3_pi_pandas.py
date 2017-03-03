@@ -21,12 +21,12 @@ pool = Pool()
 def calculpi():
     from decimal import Decimal, getcontext   # PI calc
     #print( 'print pii ....' )
-    getcontext().prec=3500
+    getcontext().prec=500
     pii=sum(1/Decimal(16)**k * 
             (Decimal(4)/(8*k+1) - 
              Decimal(2)/(8*k+4) - 
              Decimal(1)/(8*k+5) -
-             Decimal(1)/(8*k+6)) for k in range(3500))
+             Decimal(1)/(8*k+6)) for k in range(500))
    # print( 'print pii',pii )
     return pii
 
@@ -50,7 +50,7 @@ def host(id):
 
 pool.ncpus = '*'
 pool.ncpus = 'autodetect'
-pool.ncpus = 0  # when nodes replaced by 1
+pool.ncpus = 4  # when nodes replaced by 1
 #pool.nodes='*'
 print("Evaluate on "+str(pool.ncpus)+" cpus")
 pool.servers = ('localhost:5653','localhost:5654', 'Filip:5653','aaron:5653')
@@ -63,11 +63,12 @@ res5 = pool.amap( host, range(totalchunks) )
 while not res5.ready():
          time.sleep(1)
          print(stats()  )
+print( '##'.join(res5.get())  )
 
 print( "=========")
 csvheader="chunk,host,result\n"
 csv=csvheader+"\n".join(res5.get()) 
-####print( csv,' === CSV' )
+print( csv,' === CSV' )
 pool.close()
 pool.join()
 ######### get csv to pandas

@@ -1,4 +1,4 @@
-I like to use only defined servers. Not local.
+I like to use only servers in a list. Not local.
 --------------------------------------------
 
 I can by setting
@@ -16,7 +16,7 @@ and removed **nodes** and put **1**
 ```
 
 
-Versions
+Versions of libraries
 ----------------------
 When 
 ```
@@ -27,8 +27,12 @@ error appears, update ppft
 pip   install --upgrade ppft
 ```
 
+
 Run servers:
 ------------
 ```
 /home/ojr/anaconda3/bin//ppserver.py -p 5653 -w 4 -t 3600
 ```
+
+Carefull - once the server runs, changes in library are not known to the server!
+Needs to restart.
