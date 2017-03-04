@@ -1,3 +1,7 @@
 .ipynb_*
 __pycache__
 *~
+qr.png
+*.avi
+*.mp4
+
