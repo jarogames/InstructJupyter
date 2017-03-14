@@ -16,9 +16,9 @@ def host(id ,TRIMIN1):
     import NuPhyPy.srim.srim as srim
     #print('starting TRIM with ',id,ipath)
     tmpp=srim.run_srim(ipath,TRIMIN1, silent=True)  
-    #print('done TRIM')
-    return ( id,socket.gethostname(),tmpp )
-    #return tmpp
+    #########  return list: chunk #;  computer;  pandas
+    return ( id,  socket.gethostname(),  tmpp )
+
 
 alpha=db.isotope(4,2)
 h1=db.isotope(1,1)
@@ -33,6 +33,7 @@ Eini=5.800
 rho=2.253
 mgcm2=srim.get_mgcm2( 25.5,  rho )
 print( mgcm2,  srim.get_um( mgcm2, rho))
+###################  SRIM PREPARATION ########
 ipath=srim.CheckSrimFiles()
 TRIMIN=srim.PrepSrimFile( ion=h1, energy=Eini, angle=0., number=100 ,
     mater='c', thick=mgcm2, dens=rho  )
@@ -42,14 +43,35 @@ TRIMIN=srim.PrepSrimFile( ion=h1, energy=Eini, angle=0., number=100 ,
 pool.ncpus =1
 pool.servers = ('localhost:5653','localhost:5654', 'Filip:5653')
 #pool.servers = ('localhost:5653','localhost:5654', 'Filip:5653','aaron:5653')
-totalchunks=3
+totalchunks=1
 params=[ TRIMIN, TRIMIN, TRIMIN]
 res5 = pool.amap( host, range(totalchunks) , params )
 while not res5.ready():
          time.sleep(1)
          print( stats()  )
-for f in res5.get():
+### mainpanda:
+##  each chunk cn be different length...
+import numpy as np
+#np.histogram( [1,2,3,1,2,3,4] ,bins=5 )  # bins from min to max
+for f in res5.get():  #### chunk # f[0];  comp f[1];  f[2]==pandas
     print( f[0],'===',f[1],'=======================')
-    print( f[2]['e'])
+    # GENERATE GAUSS
+    flength=len(f[2]['e'])
+    f[2]['de']= pd.Series(np.random.randn(flength), index=f[2].index)
+  
+    print( f[2][ ['e','de']])
+    # FILL
+    hi,hiedg=np.histogram( [ 1000*x for x in f[2]['e']] ,bins=range(7000) )  # bins defined
+    #hi=[ 1000*x for x in hi]
+    print(hi)
+    #    hi,hiedg=np.histogram( f[2]['e'] ,bins=np.arange(0,7,0.1) )  # bins defined
+
+    #plt.plot()
+import matplotlib.pyplot as plt
+#plt.bar( hiedg, hi, width=1 )
+plt.bar(   hi  )
+plt.xlim(min(hiedg), max(hiedg))
+plt.show()
+
 pool.close()
 pool.join()
