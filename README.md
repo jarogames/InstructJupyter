@@ -31,5 +31,5 @@ It is possible to use python3 from Ubuntu system. This is an installtion sequenc
   aptitude install python-imaging-tk
   # Image-Tk
   aptitude install python3-pil.imagetk
-
+  pip3 install PyGithub
 ```
