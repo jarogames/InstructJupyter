@@ -1,0 +1,38 @@
+#!/bin/bash
+
+###rundirs=( $( find ~/Dropbox/ -iname "run[0-9]" ) )
+
+
+rundirs1=( $(find ~/Dropbox -type d -iname  "run*" -iname  "run[0-9]" ) )
+rundirs2=( $(find ~/Dropbox -type d -iname  "run*" -iname  "run[0-9][0-9]" ) )
+rundirs3=( $(find ~/Dropbox -type d -iname  "run*" -iname  "run[0-9][0-9][0-9]" ) )
+rundirs=( )
+
+
+rundirs=( "${rundirs1[@]}"  "${rundirs2[@]}"  "${rundirs3[@]}"  )
+
+
+for i in "${rundirs[@]}"; do
+  bn=$( basename "$i" ) 
+  echo "i... " "$i" basename= $bn
+  cd "$i"
+  
+  if [ -e "$bn.zip" ]; then
+    echo i... "$bn.zip"  exists
+  else
+    echo X... "$bn.zip"  doesnot exist ... ZIPPING:
+    
+    zip -u "$bn.zip"  *.asc *.txt
+  fi  
+  echo Running jupyter
+  pwd
+  cd ..
+  if [ -e "$bn.ipynb" ]; then
+     echo i... "$bn.ipynb" exists
+  else
+     echo X... JUPYTER "$bn.ipynb" doesnt exist 
+     python3 $HOME/bin/jupyfun.py -o $bn -d $bn
+  fi
+  
+done
+sleep 15
