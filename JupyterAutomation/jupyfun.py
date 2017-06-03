@@ -4,6 +4,12 @@ This is a way to generate jupyter notebook
 and
 HTML afterwards
 I dont see a way to append to a jupyter notebook.....
+
+./jupyfun.py  ... from some directory to parse a subdirectory
+
+ *  -o outputname ... .ipynb  will be appended
+ *  -d run011 ...  this script is run from directory, that contains subdirectory /run11/ with data
+ * -html ...  create also html file - not useful in a real jupyter
 """
 import nbformat as nbf
 import glob

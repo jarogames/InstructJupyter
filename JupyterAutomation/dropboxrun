@@ -23,15 +23,24 @@ for i in "${rundirs[@]}"; do
     echo X... "$bn.zip"  doesnot exist ... ZIPPING:
     
     zip -u "$bn.zip"  *.asc *.txt
-  fi  
-  echo Running jupyter
+  fi
+
+  
+  echo ======== Running jupyter ================================
   pwd
   cd ..
+ 
   if [ -e "$bn.ipynb" ]; then
-     echo i... "$bn.ipynb" exists
-  else
-     echo X... JUPYTER "$bn.ipynb" doesnt exist 
-     python3 $HOME/bin/jupyfun.py -o $bn -d $bn
+      echo i... "$bn.ipynb" exists
+      LASTFILE=`find $bn -type f -printf '%Ts %p\n' | sort -n | tail -1 | cut -f1 -d" "`
+      TIMESTAMP=`stat -c '%Z'  "$bn.ipynb"`
+      echo  notebook "$TIMESTAMP" ....... "$LASTFILE" lastfile in dir
+      if [ "$TIMESTAMP" -gt "$LASTFILE" ]; then
+	  echo i... notebook is older than files ... i quit
+	  continue
+      fi
+      echo X... JUPYTER "$bn.ipynb" doesnt exist or is older 
+      python3 $HOME/bin/jupyfun.py -o $bn -d $bn
   fi
   
 done
