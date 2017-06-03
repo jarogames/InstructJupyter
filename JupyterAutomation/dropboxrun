@@ -17,8 +17,19 @@ for i in "${rundirs[@]}"; do
   echo "i... " "$i" basename= $bn
   cd "$i"
   
+  echo ======== Running ZIP ================================"$bn.zip"
   if [ -e "$bn.zip" ]; then
     echo i... "$bn.zip"  exists
+    LASTFILE=`find .  \( -iname \*.asc -o -iname \*.txt \)  -type f -printf '%Ts %p\n' | sort -n | tail -1 | cut -f1 -d" "`
+    TIMESTAMP=`stat -c '%Z'  "$bn.zip"`
+    echo t... ZIPile "$TIMESTAMP" ....... "$LASTFILE" lastfile in dir
+    if [ "$TIMESTAMP" -gt "$LASTFILE" ]; then
+	echo i... ZIP file is younger ... OK
+    else
+	echo X... "$bn.zip"  is TOO OLD ... ZIPPING:
+	zip -u "$bn.zip"  *.asc *.txt
+    fi
+    
   else
     echo X... "$bn.zip"  doesnot exist ... ZIPPING:
     
@@ -26,7 +37,7 @@ for i in "${rundirs[@]}"; do
   fi
 
   
-  echo ======== Running jupyter ================================
+  echo -------- Running jupyter --------------------------------
   pwd
   cd ..
  
@@ -34,7 +45,7 @@ for i in "${rundirs[@]}"; do
       echo i... "$bn.ipynb" exists
       LASTFILE=`find $bn -type f -printf '%Ts %p\n' | sort -n | tail -1 | cut -f1 -d" "`
       TIMESTAMP=`stat -c '%Z'  "$bn.ipynb"`
-      echo  notebook "$TIMESTAMP" ....... "$LASTFILE" lastfile in dir
+      echo t... notebook "$TIMESTAMP" ....... "$LASTFILE" lastfile in dir
       if [ "$TIMESTAMP" -gt "$LASTFILE" ]; then
 	  echo i... notebook is older than files ... i quit
 	  continue
