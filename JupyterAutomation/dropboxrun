@@ -48,8 +48,11 @@ for i in "${rundirs[@]}"; do
       echo t... notebook "$TIMESTAMP" ....... "$LASTFILE" lastfile in dir
       if [ "$TIMESTAMP" -gt "$LASTFILE" ]; then
 	  echo i... notebook is older than files ... i quit
-	  continue
+      else
+	  echo X... JUPYTER "$bn.ipynb" doesnt exist or is older 
+	  python3 $HOME/bin/jupyfun.py -o $bn -d $bn
       fi
+  else
       echo X... JUPYTER "$bn.ipynb" doesnt exist or is older 
       python3 $HOME/bin/jupyfun.py -o $bn -d $bn
   fi
