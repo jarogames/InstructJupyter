@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 from iminuit import Minuit
 def f(x, y, z):
     return (x - 2) ** 2 + (y - 3) ** 2 + (z - 4) ** 2
